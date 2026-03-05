@@ -299,7 +299,87 @@
             });
         }
     }
+document.addEventListener('DOMContentLoaded', function() {
+    const monthYearText = document.getElementById('month-year');
+    const calendarDays = document.getElementById('calendar-days');
+    const prevBtn = document.getElementById('prev-month');
+    const nextBtn = document.getElementById('next-month');
 
+    let currentDate = new Date();
+
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    function renderCalendar() {
+        calendarDays.innerHTML = '';
+        
+        // Adiciona os nomes dos dias primeiro
+        dayNames.forEach(day => {
+            const dayNameEl = document.createElement('span');
+            dayNameEl.className = 'calendar-day-name';
+            dayNameEl.innerText = day;
+            calendarDays.appendChild(dayNameEl);
+        });
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        monthYearText.innerText = `${months[month]} ${year}`;
+
+        // Primeiro dia do mês e último dia do mês
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+        const lastDayOfLastMonth = new Date(year, month, 0).getDate();
+
+        // Dias do mês anterior para preencher a primeira linha
+        for (let i = firstDayOfMonth; i > 0; i--) {
+            const dayEl = document.createElement('span');
+            dayEl.className = 'calendar-day other-month';
+            dayEl.innerText = lastDayOfLastMonth - i + 1;
+            calendarDays.appendChild(dayEl);
+        }
+
+        // Dias do mês atual
+        const today = new Date();
+        for (let i = 1; i <= lastDateOfMonth; i++) {
+            const dayEl = document.createElement('span');
+            dayEl.className = 'calendar-day';
+            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayEl.classList.add('today');
+            }
+            dayEl.innerText = i;
+            calendarDays.appendChild(dayEl);
+        }
+
+        // Dias do próximo mês para completar a grade (6 semanas = 42 células)
+        const totalSlots = 42;
+        const currentSlots = firstDayOfMonth + lastDateOfMonth;
+        for (let i = 1; i <= (totalSlots - currentSlots); i++) {
+            const dayEl = document.createElement('span');
+            dayEl.className = 'calendar-day other-month';
+            dayEl.innerText = i;
+            calendarDays.appendChild(dayEl);
+        }
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    renderCalendar();
+});
+   
+   
     // ============================================
     // Initialize All Functions
     // ============================================
